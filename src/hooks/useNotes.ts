@@ -11,15 +11,18 @@ export const useNotes = () => {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
+      let parsedNotes: Note[] = [];
+      
       if (stored) {
-        const parsedNotes = JSON.parse(stored).map((note: any) => ({
+        parsedNotes = JSON.parse(stored).map((note: any) => ({
           ...note,
           createdAt: new Date(note.createdAt),
           updatedAt: new Date(note.updatedAt),
         }));
-        setNotes(parsedNotes);
-      } else {
-        // Add dummy data if no stored notes
+      }
+      
+      // Add dummy data if no stored notes or empty array
+      if (parsedNotes.length === 0) {
         const dummyNotes: Note[] = [
           {
             id: '1',
@@ -194,6 +197,8 @@ resources:
           }
         ];
         setNotes(dummyNotes);
+      } else {
+        setNotes(parsedNotes);
       }
     } catch (error) {
       console.error('Failed to load notes:', error);

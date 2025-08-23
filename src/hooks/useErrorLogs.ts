@@ -9,14 +9,17 @@ export const useErrorLogs = () => {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
+      let parsedLogs: ErrorLog[] = [];
+      
       if (stored) {
-        const parsedLogs = JSON.parse(stored).map((log: any) => ({
+        parsedLogs = JSON.parse(stored).map((log: any) => ({
           ...log,
           createdAt: new Date(log.createdAt),
         }));
-        setErrorLogs(parsedLogs);
-      } else {
-        // Add dummy error logs if none exist
+      }
+      
+      // Add dummy error logs if none exist or empty array
+      if (parsedLogs.length === 0) {
         const dummyErrorLogs: ErrorLog[] = [
           {
             id: '1',
@@ -124,6 +127,8 @@ return (
           }
         ];
         setErrorLogs(dummyErrorLogs);
+      } else {
+        setErrorLogs(parsedLogs);
       }
     } catch (error) {
       console.error('Failed to load error logs:', error);
