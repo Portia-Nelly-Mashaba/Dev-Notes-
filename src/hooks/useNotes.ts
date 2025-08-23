@@ -18,6 +18,182 @@ export const useNotes = () => {
           updatedAt: new Date(note.updatedAt),
         }));
         setNotes(parsedNotes);
+      } else {
+        // Add dummy data if no stored notes
+        const dummyNotes: Note[] = [
+          {
+            id: '1',
+            title: 'React useEffect Hook Best Practices',
+            content: `// Clean up subscriptions and event listeners
+useEffect(() => {
+  const subscription = dataService.subscribe(handleData);
+  
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
+
+// Dependency array best practices
+useEffect(() => {
+  fetchUserData(userId);
+}, [userId]); // Only re-run when userId changes`,
+            type: 'snippet',
+            language: 'javascript',
+            tags: ['react', 'hooks', 'useEffect', 'cleanup'],
+            isFavorite: true,
+            createdAt: new Date('2024-01-15'),
+            updatedAt: new Date('2024-01-15'),
+          },
+          {
+            id: '2',
+            title: 'PostgreSQL Performance Optimization',
+            content: `-- Index optimization for complex queries
+CREATE INDEX CONCURRENTLY idx_user_activity_date 
+ON user_activity(user_id, created_at DESC);
+
+-- Explain analyze for query performance
+EXPLAIN (ANALYZE, BUFFERS) 
+SELECT u.name, COUNT(a.id) as activity_count
+FROM users u 
+LEFT JOIN user_activity a ON u.id = a.user_id 
+WHERE u.created_at > NOW() - INTERVAL '30 days'
+GROUP BY u.id, u.name
+ORDER BY activity_count DESC;`,
+            type: 'snippet',
+            language: 'sql',
+            tags: ['postgresql', 'performance', 'indexing', 'database'],
+            isFavorite: false,
+            createdAt: new Date('2024-01-10'),
+            updatedAt: new Date('2024-01-12'),
+          },
+          {
+            id: '3',
+            title: 'Docker Multi-stage Build Tutorial',
+            content: `# Multi-stage Dockerfile for Node.js app
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+FROM node:18-alpine AS runtime
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+
+# Benefits:
+# - Smaller final image size
+# - Security (no build tools in production)
+# - Faster deployments`,
+            type: 'tutorial',
+            language: 'dockerfile',
+            tags: ['docker', 'optimization', 'nodejs', 'deployment'],
+            isFavorite: true,
+            createdAt: new Date('2024-01-08'),
+            updatedAt: new Date('2024-01-08'),
+          },
+          {
+            id: '4',
+            title: 'TypeScript Generic Utility Types',
+            content: `// Useful TypeScript utility patterns
+type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
+// Example usage
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  profile: {
+    avatar: string;
+    bio: string;
+  };
+}
+
+type UserUpdate = Optional<User, 'id'>;
+type PartialUser = DeepPartial<User>;`,
+            type: 'snippet',
+            language: 'typescript',
+            tags: ['typescript', 'generics', 'utility-types', 'types'],
+            isFavorite: false,
+            createdAt: new Date('2024-01-05'),
+            updatedAt: new Date('2024-01-07'),
+          },
+          {
+            id: '5',
+            title: 'API Authentication Microservice',
+            content: `# JWT Authentication Service Architecture
+
+## Overview
+Centralized authentication service using JWT tokens with refresh token rotation.
+
+## Tech Stack
+- Node.js + Express
+- Redis for session storage
+- PostgreSQL for user data
+- Docker containerization
+
+## Key Features
+- Token rotation every 15 minutes
+- Blacklist for revoked tokens
+- Rate limiting on login attempts
+- Social OAuth integration
+
+## Security Considerations
+- HTTPS only in production
+- Secure httpOnly cookies
+- CSRF protection
+- Input validation with Joi`,
+            type: 'project',
+            language: 'markdown',
+            tags: ['authentication', 'microservices', 'jwt', 'security', 'nodejs'],
+            isFavorite: true,
+            createdAt: new Date('2024-01-03'),
+            updatedAt: new Date('2024-01-04'),
+          },
+          {
+            id: '6',
+            title: 'Kubernetes Helm Chart Template',
+            content: `# values.yaml
+replicaCount: 3
+image:
+  repository: myapp
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: api.example.com
+      paths: ["/"]
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi`,
+            type: 'tool',
+            language: 'yaml',
+            tags: ['kubernetes', 'helm', 'devops', 'deployment'],
+            isFavorite: false,
+            createdAt: new Date('2024-01-01'),
+            updatedAt: new Date('2024-01-02'),
+          }
+        ];
+        setNotes(dummyNotes);
       }
     } catch (error) {
       console.error('Failed to load notes:', error);
