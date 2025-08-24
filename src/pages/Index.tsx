@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Note, ErrorLog } from '@/types';
 import { useNotes } from '@/hooks/useNotes';
 import { useErrorLogs } from '@/hooks/useErrorLogs';
@@ -15,6 +16,7 @@ import { ShareDialog } from '@/components/ShareDialog';
 import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
+  const navigate = useNavigate();
   const { 
     notes, 
     allTags, 
@@ -133,6 +135,15 @@ const Index = () => {
               <p className="text-muted-foreground">Your personal code assistant</p>
             </div>
             <div className="flex items-center gap-2">
+              <Link to="/blog">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <FileText className="h-4 w-4" />
+                  Community Blog
+                </Button>
+              </Link>
               <Button
                 onClick={() => setCurrentView('note-form')}
                 className="flex items-center gap-2"
@@ -194,13 +205,18 @@ const Index = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {notes.map(note => (
                       <div key={note.id} className="relative">
-                        <NoteCard
-                          note={note}
-                          onEdit={handleEditNote}
-                          onDelete={handleDeleteNote}
-                          onToggleFavorite={toggleFavorite}
-                          onShare={(note) => setShareNote(note)}
-                        />
+                        <div 
+                          onClick={() => navigate(`/note/${note.id}`)}
+                          className="cursor-pointer"
+                        >
+                          <NoteCard
+                            note={note}
+                            onEdit={handleEditNote}
+                            onDelete={handleDeleteNote}
+                            onToggleFavorite={toggleFavorite}
+                            onShare={(note) => navigate('/blog')}
+                          />
+                        </div>
                         <div className="absolute top-2 left-2">
                           <input
                             type="checkbox"
@@ -230,7 +246,11 @@ const Index = () => {
                 ) : (
                   <div className="space-y-4">
                     {errorLogs.map(error => (
-                      <div key={error.id} className="border rounded-lg p-4 space-y-3">
+                      <div 
+                        key={error.id} 
+                        className="border rounded-lg p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+                        onClick={() => navigate(`/error/${error.id}`)}
+                      >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <h3 className="font-semibold">{error.title}</h3>
@@ -246,14 +266,20 @@ const Index = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleEditErrorLog(error)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditErrorLog(error);
+                              }}
                             >
                               Edit
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleDeleteErrorLog(error.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteErrorLog(error.id);
+                              }}
                               className="text-destructive"
                             >
                               Delete
